@@ -1,0 +1,114 @@
+<!-- 保存为：index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵眸眼镜线上发布会 - 学生作品共享系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 这里包含所有CSS样式 */
+        :root { --primary: #1a237e; --secondary: #5c6bc0; --accent: #3949ab; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #0a1931 0%, #1a1a2e 100%); color: #333; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; padding: 40px 30px; text-align: center; }
+        .logo { font-size: 3rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .logo i { color: #ffd700; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .subtitle { font-size: 1.3rem; opacity: 0.9; margin-bottom: 20px; }
+        .system-url { background: rgba(255,255,255,0.15); padding: 15px 25px; border-radius: 15px; font-family: monospace; font-size: 1.2rem; margin: 20px auto; max-width: 800px; word-break: break-all; color: white; border: 2px solid rgba(255,255,255,0.2); }
+        /* ... 更多CSS样式 ... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"><i class="fas fa-glasses"></i>"灵眸"眼镜线上发布会</div>
+            <p class="subtitle">学生免登录共享系统 · 10人参与 · 作品互相可见 · AI自动评审</p>
+            <div class="system-url" id="systemUrl">系统部署中...</div>
+        </header>
+        
+        <!-- 导航标签 -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="upload"><i class="fas fa-cloud-upload-alt"></i>上传设计</button>
+            <button class="tab-btn" data-tab="gallery"><i class="fas fa-images"></i>作品展厅</button>
+            <button class="tab-btn" data-tab="review"><i class="fas fa-robot"></i>AI评审</button>
+            <button class="tab-btn" data-tab="leaderboard"><i class="fas fa-trophy"></i>排行榜</button>
+        </div>
+        
+        <!-- 页面内容 -->
+        <div class="tab-content active" id="upload-tab">
+            <!-- 上传页面内容 -->
+        </div>
+        
+        <div class="tab-content" id="gallery-tab">
+            <!-- 展厅页面内容 -->
+        </div>
+        
+        <div class="tab-content" id="review-tab">
+            <!-- AI评审页面内容 -->
+        </div>
+        
+        <div class="tab-content" id="leaderboard-tab">
+            <!-- 排行榜页面内容 -->
+        </div>
+        
+        <footer>
+            <p>"灵眸"眼镜线上发布会 - 学生作品共享与AI评审系统</p>
+        </footer>
+    </div>
+
+    <script>
+        // 完整的JavaScript代码
+        const students = Array.from({length: 10}, (_, i) => ({
+            id: i + 1, name: `学生${i + 1}`, avatar: `👨‍🎓`, submitted: false, reviewed: false, design: null
+        }));
+        
+        let currentStudent = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initStudentSelector();
+            setupEventListeners();
+            loadSampleData();
+            updateSystemUrl();
+            
+            alert("灵眸眼镜系统已加载！\n\n使用说明：\n1. 选择学生编号（1-10）\n2. 填写设计信息和参数\n3. 上传设计图\n4. 提交作品\n5. 在展厅查看所有作品\n6. 使用AI评审获取分数\n\n请将此链接分享给10个学生：\n" + window.location.href);
+        });
+        
+        function initStudentSelector() {
+            const selector = document.getElementById('studentSelector');
+            selector.innerHTML = '';
+            students.forEach(student => {
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                card.dataset.id = student.id;
+                let status = '待提交', statusClass = 'status-pending';
+                if (student.submitted && student.reviewed) { status = '已评审'; statusClass = 'status-reviewed'; }
+                else if (student.submitted) { status = '已提交'; statusClass = 'status-submitted'; }
+                card.innerHTML = `<div class="student-id">${student.avatar} ${student.name}</div><div class="student-status ${statusClass}">${status}</div>`;
+                card.addEventListener('click', () => selectStudent(student.id));
+                selector.appendChild(card);
+            });
+        }
+        
+        function selectStudent(studentId) {
+            currentStudent = students.find(s => s.id === studentId);
+            document.querySelectorAll('.student-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.student-card[data-id="${studentId}"]`).classList.add('active');
+            document.getElementById('currentStudentName').textContent = currentStudent.name;
+            let statusText = '状态：未提交';
+            if (currentStudent.submitted) {
+                if (currentStudent.reviewed) statusText = '状态：已评审';
+                else statusText = '状态：已提交，待评审';
+            }
+            document.getElementById('studentStatus').textContent = statusText;
+            document.getElementById('uploadForm').style.display = 'block';
+            document.getElementById('uploadEmpty').style.display = 'none';
+            if (currentStudent.design) fillFormData(currentStudent.design); else clearForm();
+        }
+        
+        // ... 更多JavaScript函数 ...
+    </script>
+</body>
+</html>
